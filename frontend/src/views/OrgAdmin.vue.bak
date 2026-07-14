@@ -831,7 +831,7 @@
     <ConfirmPopup group="templating">
         <template #message="slotProps">
             <div class="flex flex-col items-center w-full gap-3 border-b border-white/10 p-3 mb-3 pb-0">
-                <i :class="slotProps.message.icon" class="text-4xl text-amber-500"></i>
+                <i :class="slotProps.message.icon" class="text-6xl text-primary-500"></i>
                 <p class="text-sm font-bold text-center text-white">{{ slotProps.message.message }}</p>
             </div>
         </template>
@@ -1125,8 +1125,7 @@ const deletePendingMembership = async (id, event) => {
     icon: 'pi pi-exclamation-triangle',
     acceptLabel: 'Sim',
     rejectLabel: 'Não',
-    rejectClass: 'p-button-text p-button-sm mr-2',
-    acceptClass: 'p-button-danger p-button-sm',
+    acceptClass: 'p-button-danger',
     accept: async () => {
       try {
         await api.delete(`/memberships/${id}`);
@@ -1148,8 +1147,7 @@ const deleteInvite = async (id, event) => {
     icon: 'pi pi-exclamation-triangle',
     acceptLabel: 'Sim',
     rejectLabel: 'Não',
-    rejectClass: 'p-button-text p-button-sm mr-2',
-    acceptClass: 'p-button-danger p-button-sm',
+    acceptClass: 'p-button-danger',
     accept: async () => {
       try {
         await api.delete(`/invites/${id}`);

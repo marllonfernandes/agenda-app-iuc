@@ -1,6 +1,7 @@
 <template>
   <div class="min-h-screen bg-dark flex flex-col">
     <Toast position="top-center" />
+    <ConfirmDialog />
     
     <!-- Top App Bar — hidden when inside /org (OrgAdmin has its own header) -->
     <header v-if="!isOrgRoute" class="sticky top-0 z-40 bg-dark/95 backdrop-blur-md border-b border-white/5">
