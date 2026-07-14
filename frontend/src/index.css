@@ -61,3 +61,8 @@ input, textarea {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+@layer base {
+  body {
+    overscroll-behavior-y: none;
+  }
+}

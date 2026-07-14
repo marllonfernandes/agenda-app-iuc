@@ -386,8 +386,8 @@
     <transition name="bottom-sheet">
       <div v-if="showEquipeActions" class="fixed inset-0 z-[100] flex flex-col justify-end">
         <div class="absolute inset-0 bg-dark/80 backdrop-blur-sm" @click="showEquipeActions = false"></div>
-        <div class="bg-dark border-t border-white/10 rounded-t-[2rem] p-4 relative pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-          <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6 mt-2"></div>
+        <div class="bg-dark border-t border-white/10 rounded-t-[2rem] p-4 relative pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.5)] max-h-[85vh] overflow-y-auto">
+          <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6 mt-2 shrink-0"></div>
           <div class="space-y-2 mb-4">
             <button @click="openEmailInviteForm" class="w-full p-4 flex items-center gap-4 bg-white/5 rounded-2xl active:bg-white/10 transition-colors">
               <i class="pi pi-envelope text-emerald-400 text-xl"></i>
@@ -841,7 +841,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 import { useRouter } from 'vue-router';
@@ -1512,5 +1512,13 @@ const getTimeStr = (dateObj) => {
   return dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 };
 
-onMounted(loadData);
+let pollingInterval;
+onMounted(() => {
+  loadData();
+  pollingInterval = setInterval(loadData, 5000);
+});
+
+onUnmounted(() => {
+  if (pollingInterval) clearInterval(pollingInterval);
+});
 </script>
