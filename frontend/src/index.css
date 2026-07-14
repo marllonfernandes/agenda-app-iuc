@@ -24,9 +24,22 @@
   }
 }
 
+* {
+  touch-action: manipulation;
+}
+
 body {
   @apply bg-dark text-white antialiased;
   -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Permitir seleção em inputs e textareas */
+input, textarea {
+  user-select: auto;
+  -webkit-user-select: auto;
 }
 
 .glass {

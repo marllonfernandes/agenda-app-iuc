@@ -7,6 +7,26 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
+});
+
+const sendInviteEmail = async (to, acceptLink) => {
+  const mailOptions = {
+    from: process.env.SMTP_USER,
+    to,
+    subject: 'Convite para participar da organização',
+    text: `Você foi convidado para participar da nossa organização.\n\nPor favor, clique no link abaixo para aceitar o convite:\n${acceptLink}`
+  };
+  return transporter.sendMail(mailOptions);
+};
+
 
 const {
   User,
@@ -356,6 +376,7 @@ apiRouter.post("/admin/organizations", async (req, res) => {
         pendingInviteLink: acceptLink,
         pendingInviteEmail: adminEmail.toLowerCase()
       });
+      await sendInviteEmail(adminEmail, acceptLink);
     }
     
     res.status(201).json({ id: org._id.toString(), acceptLink });
@@ -414,6 +435,7 @@ apiRouter.put("/admin/organizations/:id", async (req, res) => {
         pendingInviteLink: acceptLink,
         pendingInviteEmail: emailToUse.toLowerCase()
       });
+      await sendInviteEmail(emailToUse, acceptLink);
     }
     
     res.json({ success: true, acceptLink });
@@ -502,6 +524,17 @@ apiRouter.get("/invites", checkPermission('team', 'view'), async (req, res) => {
   }
 });
 
+
+apiRouter.delete("/invites/:id", checkPermission('team', 'edit'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Invitation.findOneAndDelete({ _id: id, orgId: req.orgId });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 apiRouter.post("/admin/invite-email", checkPermission('team', 'create'), async (req, res) => {
   try {
     const { email } = req.body;
@@ -527,7 +560,8 @@ apiRouter.post("/admin/invite-email", checkPermission('team', 'create'), async (
     });
 
     const acceptLink = `${req.protocol}://${req.get("host")}/join?token=${inviteToken}`;
-    res.json({ success: true, message: "Invitation created", acceptLink });
+    await sendInviteEmail(email, acceptLink);
+    res.json({ success: true, message: "Invitation created and email sent", acceptLink });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -572,6 +606,17 @@ apiRouter.get("/memberships", async (req, res) => {
   try {
     const m = await Membership.find({ orgId: req.orgId });
     res.json(m.map(mapId));
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+apiRouter.delete("/memberships/:id", checkPermission('team', 'edit'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Membership.findOneAndDelete({ _id: id, orgId: req.orgId });
+    res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

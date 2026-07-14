@@ -35,6 +35,15 @@ cd backend && npm install
 cd ../frontend && npm install
 ```
 
+## ⚙️ Variáveis de Ambiente
+
+Crie um arquivo `.env` na pasta `/backend` com as configurações necessárias, incluindo as credenciais para envio de e-mail (usamos nodemailer):
+
+```env
+SMTP_USER=seu-email@gmail.com
+SMTP_PASS=sua-senha-de-app
+```
+
 ## 🔐 Credenciais de Admin
 
 Para o primeiro acesso ao sistema (Global Admin), utilize as seguintes credenciais padrão:

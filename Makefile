@@ -41,5 +41,7 @@ deploy-gcp: build
 	cd backend && gcloud run deploy $(SERVICE_NAME) \
 		--source . \
 		--region $(REGION) \
-		--allow-unauthenticated
+		--allow-unauthenticated \
+		--service-account 1094295943535-compute@developer.gserviceaccount.com \
+		--set-secrets="SMTP_USER=SMTP_USER:latest,SMTP_PASS=SMTP_PASS:latest"
 

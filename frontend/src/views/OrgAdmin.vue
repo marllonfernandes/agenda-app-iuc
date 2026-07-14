@@ -158,14 +158,19 @@
 
           <!-- Pending Invites -->
           <div v-for="pending in pendingMemberships" :key="pending.id" class="glass p-3 rounded-2xl border border-white/5 border-dashed flex flex-col gap-3 opacity-80">
-            <div class="flex items-center gap-3">
-              <div class="h-10 w-10 min-w-[40px] rounded-full bg-white/5 flex items-center justify-center text-slate-400 text-xs font-bold">
-                <i class="pi pi-envelope-delay"></i>
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 min-w-[40px] rounded-full bg-white/5 flex items-center justify-center text-slate-400 text-xs font-bold">
+                  <i class="pi pi-envelope-delay"></i>
+                </div>
+                <div class="flex-1 truncate">
+                  <p class="font-bold text-white text-sm truncate">{{ pending.invitedEmail }}</p>
+                  <span class="text-[10px] text-amber-500 uppercase font-bold tracking-wider">Convite por E-mail (Pendente)</span>
+                </div>
               </div>
-              <div class="flex-1 truncate">
-                <p class="font-bold text-white text-sm truncate">{{ pending.invitedEmail }}</p>
-                <span class="text-[10px] text-amber-500 uppercase font-bold tracking-wider">Convite por E-mail (Pendente)</span>
-              </div>
+              <button @click="deletePendingMembership(pending.id)" class="text-rose-400 hover:text-rose-300 p-2">
+                <i class="pi pi-trash"></i>
+              </button>
             </div>
             <div v-if="pending.inviteToken" class="flex items-center gap-2 bg-dark-lighter border border-white/5 rounded-xl p-1.5 mt-1">
               <input type="text" readonly :value="getInviteLink(pending.inviteToken)" class="bg-transparent text-xs text-slate-300 px-2 outline-none w-full" />
@@ -177,14 +182,19 @@
 
           <!-- Active Invite Codes (WhatsApp) -->
           <div v-for="invite in activeInvites" :key="invite.id" class="glass p-3 rounded-2xl border border-white/5 border-dashed flex flex-col gap-3">
-            <div class="flex items-center gap-3">
-              <div class="h-10 w-10 min-w-[40px] rounded-full bg-primary-500/10 flex items-center justify-center text-primary-400 text-xs font-bold">
-                <i class="pi pi-key"></i>
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 min-w-[40px] rounded-full bg-primary-500/10 flex items-center justify-center text-primary-400 text-xs font-bold">
+                  <i class="pi pi-key"></i>
+                </div>
+                <div class="flex-1 truncate">
+                  <p class="font-bold text-white text-sm truncate">Código: {{ invite.code }}</p>
+                  <span class="text-[10px] text-primary-400 uppercase font-bold tracking-wider">Acesso via Link Direto</span>
+                </div>
               </div>
-              <div class="flex-1 truncate">
-                <p class="font-bold text-white text-sm truncate">Código: {{ invite.code }}</p>
-                <span class="text-[10px] text-primary-400 uppercase font-bold tracking-wider">Acesso via Link Direto</span>
-              </div>
+              <button @click="deleteInvite(invite.id)" class="text-rose-400 hover:text-rose-300 p-2">
+                <i class="pi pi-trash"></i>
+              </button>
             </div>
             <div class="flex items-center gap-2 bg-dark-lighter border border-white/5 rounded-xl p-1.5 mt-1">
               <input type="text" readonly :value="getInviteLink(invite.code)" class="bg-transparent text-xs text-slate-300 px-2 outline-none w-full" />
@@ -1091,6 +1101,28 @@ const sendEmailInvite = async () => {
     toast.add({ severity: 'error', summary: 'Erro', detail: err.response?.data?.error || 'Erro ao enviar convite', life: 5000 });
   } finally {
     inviteLoading.value = false;
+  }
+};
+
+const deletePendingMembership = async (id) => {
+  if (!confirm('Tem certeza que deseja cancelar e excluir este convite por e-mail?')) return;
+  try {
+    await api.delete(`/memberships/${id}`);
+    memberships.value = memberships.value.filter(m => m.id !== id);
+    toast.add({ severity: 'success', summary: 'Sucesso', detail: 'Convite cancelado', life: 3000 });
+  } catch (err) {
+    toast.add({ severity: 'error', summary: 'Erro', detail: err.response?.data?.error || 'Erro ao cancelar convite', life: 5000 });
+  }
+};
+
+const deleteInvite = async (id) => {
+  if (!confirm('Tem certeza que deseja excluir este link de convite?')) return;
+  try {
+    await api.delete(`/invites/${id}`);
+    activeInvites.value = activeInvites.value.filter(i => i.id !== id);
+    toast.add({ severity: 'success', summary: 'Sucesso', detail: 'Convite excluído', life: 3000 });
+  } catch (err) {
+    toast.add({ severity: 'error', summary: 'Erro', detail: err.response?.data?.error || 'Erro ao excluir convite', life: 5000 });
   }
 };
 
