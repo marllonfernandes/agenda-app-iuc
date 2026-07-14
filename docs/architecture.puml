@@ -1,0 +1,51 @@
+@startuml Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title System Context Diagram - Worship Group Agenda App
+
+Person(super_admin, "Super Admin", "Manages organizations and global settings.")
+Person(org_admin, "Organization Admin", "Manages groups, members, and events within their organization.")
+Person(band_member, "Band Member", "Views agenda, access songs, chords, and links.")
+
+System_Boundary(c1, "Agenda App System") {
+    System(app, "Agenda App", "Allows scheduling events, managing songs, and band coordination.")
+}
+
+System_Ext(gcs, "Google Cloud Storage", "Stores music files and assets.")
+System_Ext(firebase_auth, "Firebase Auth", "Handles user authentication.")
+
+Rel(super_admin, app, "Manages all organizations")
+Rel(org_admin, app, "Manages specific organization")
+Rel(band_member, app, "Uses for scheduling and music")
+Rel(app, gcs, "Stores/Retrieves files")
+Rel(app, firebase_auth, "Authenticates users")
+
+@enduml
+
+@startuml Containers
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Container Diagram - Worship Group Agenda App
+
+Person(user, "User", "Band Member / Admin")
+
+System_Boundary(c1, "Agenda App System") {
+    Container(api, "API & Web Application", "Node.js (Express)", "Handles business logic, multi-tenant data, and serves the Vue.js SPA.")
+    ContainerDb(database, "NoSQL Database", "GCP Firestore", "Stores organizations, groups, users, and events.")
+}
+
+System_Ext(firebase_auth, "Firebase Auth", "Identity Management")
+System_Ext(gcs, "Cloud Storage", "Asset Storage")
+
+Rel(user, api, "Uses", "HTTPS (JSON & Static Files)")
+Rel(api, database, "Reads/Writes")
+Rel(api, gcs, "Manages Files")
+
+@enduml
+
+

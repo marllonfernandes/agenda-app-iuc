@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  html,
+  body {
+    @apply bg-dark text-slate-200 font-sans antialiased overflow-x-hidden;
+  }
+}
+
+.router-link-active {
+  @apply text-primary-400 !important;
+}
+
+
+.glass {
+  @apply bg-dark-lighter/60 backdrop-blur-lg border border-white/10;
+}
+
+.btn-primary {
+  @apply bg-primary-600 hover:bg-primary-500 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-primary-500/20 active:scale-95;
+}
+
+.card-premium {
+  @apply glass p-6 rounded-2xl shadow-xl transition-all duration-300 hover:shadow-primary-500/10 hover:border-white/20;
+}
